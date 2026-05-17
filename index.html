@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku Solver — Backtracking Visualization</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <h1>Sudoku Solver</h1>
+      <p class="subtitle">Backtracking Algorithm with Real-Time Visualization</p>
+    </div>
+    <div class="header-right">
+      <div class="puzzle-card">
+        <div class="puzzle-name" id="puzzle-name">Classic Easy</div>
+        <div class="puzzle-meta">
+          <span class="badge badge-medium" id="puzzle-difficulty">MEDIUM</span>
+          <span class="meta-label">Click a cell, then type 1–9 to edit.</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ═══ LEFT PANEL ═══ -->
+    <div class="left-panel">
+
+      <!-- Grid -->
+      <div class="grid-section">
+        <div id="sudoku-grid" class="sudoku-grid"></div>
+        <div class="legend">
+          <span class="legend-item original">Original</span>
+          <span class="legend-item solved">Placed</span>
+          <span class="legend-item current">Attempting</span>
+          <span class="legend-item invalid">Invalid</span>
+          <span class="legend-item backtrack">Backtrack</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-section">
+        <div class="control-help">
+          <p><strong>Quick controls:</strong> Solve, step through, pause, or reset the board. Use arrows to navigate and type 1–9 to edit cells.</p>
+        </div>
+
+        <!-- Solve controls -->
+        <div class="control-group">
+          <button id="btn-solve"   class="btn btn-primary">▶ Solve</button>
+          <button id="btn-step"    class="btn btn-secondary">⏭ Step</button>
+          <button id="btn-pause"   class="btn btn-warning" disabled>⏸ Pause</button>
+          <button id="btn-reset"   class="btn btn-secondary">↺ Reset</button>
+          <button id="btn-instant" class="btn btn-secondary">⚡ Instant</button>
+        </div>
+
+        <hr class="control-divider">
+
+        <!-- Speed -->
+        <div class="control-group">
+          <span style="font-size:0.8rem;color:#64748b">Speed:</span>
+          <input type="range" id="speed-slider" class="slider" min="1" max="5" value="3">
+          <span id="speed-label">Normal</span>
+        </div>
+
+        <hr class="control-divider">
+
+        <!-- Puzzle load -->
+        <div class="control-group">
+          <select id="difficulty-select" class="select">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hard">Hard</option>
+            <option value="expert">Expert</option>
+            <option value="extreme">Extreme</option>
+          </select>
+          <button id="btn-generate"   class="btn btn-success">🎲 Generate</button>
+          <button id="btn-predefined" class="btn btn-secondary">📋 Predefined</button>
+        </div>
+
+        <hr class="control-divider">
+
+        <!-- Utilities -->
+        <div class="control-group">
+          <button id="btn-check"  class="btn btn-secondary">✓ Check</button>
+          <button id="btn-clear"  class="btn btn-danger">🗑 Clear</button>
+          <button id="btn-export" class="btn btn-secondary">📊 Export CSV</button>
+        </div>
+
+        <hr class="control-divider">
+
+        <!-- Image Upload -->
+        <div class="control-group">
+          <input type="file" id="image-upload" accept="image/*" style="display:none">
+          <button id="btn-upload" class="btn btn-secondary">📷 Upload Puzzle Image to Solve</button>
+          <div id="upload-status" style="margin-top:5px;font-size:0.8rem;"></div>
+        </div>
+
+        <hr class="control-divider">
+
+        <!-- Comparison -->
+        <div class="control-group">
+          <button class="btn btn-primary" onclick="openComparison()">⚖ Compare Solvers (BT vs AC-3)</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ RIGHT PANEL ═══ -->
+    <div class="right-panel">
+
+      <!-- Stats Dashboard -->
+      <div class="stats-panel" id="stats-panel">
+        <h3>Solving Statistics</h3>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-label">Cells Tried</span>
+            <span class="stat-value" id="stat-cells-tried">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Backtracks</span>
+            <span class="stat-value" id="stat-backtracks">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Success Rate</span>
+            <span class="stat-value" id="stat-success-rate">0.0%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Time Elapsed</span>
+            <span class="stat-value" id="stat-time">0.00s</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Steps</span>
+            <span class="stat-value" id="stat-steps">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Cells Solved</span>
+            <span class="stat-value" id="stat-cells-solved">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Remaining Empty</span>
+            <span class="stat-value" id="stat-remaining">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Max Depth</span>
+            <span class="stat-value" id="stat-depth">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Constraint Analysis -->
+      <div class="constraints-panel" id="constraints-panel">
+        <h3>Constraint Analysis</h3>
+        <div id="current-cell-info">Click a cell or start solving to see constraint details</div>
+        <div id="candidates-display" class="candidates-display"></div>
+        <div id="conflicts-display" class="conflicts-display"></div>
+      </div>
+
+      <!-- Steps Log -->
+      <div class="log-panel">
+        <h3>
+          Steps Log
+          <button id="btn-clear-log" class="btn-small">Clear</button>
+        </h3>
+        <div id="steps-log" class="steps-log"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <span id="status-message">Ready — select a puzzle or generate one to begin</span>
+    <span class="status-hint">Arrow keys to navigate cells · 1–9 to enter · Del to clear</span>
+  </div>
+
+  <!-- ════ COMPARISON MODAL ════ -->
+  <div id="comparison-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Solver Comparison: Pure Backtracking vs AC-3 + Backtracking</h2>
+        <button class="btn-close" onclick="closeComparison()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="comparison-controls">
+          <button class="btn btn-primary" onclick="runComparison()">▶ Run Comparison</button>
+          <select id="comparison-puzzle" class="select">
+            <option value="current">Current Puzzle</option>
+            <option value="all">All Predefined Puzzles</option>
+          </select>
+        </div>
+        <div id="comparison-results"></div>
+        <canvas id="comparison-chart" width="760" height="220"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════ PREDEFINED MODAL ════ -->
+  <div id="predefined-modal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Select Predefined Puzzle</h2>
+        <button class="btn-close" onclick="closePredefined()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="predefined-list" class="predefined-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (order matters: data → solvers → generator → metrics → visualizer → main) -->
+  <script src="js/puzzles.js"></script>
+  <script src="js/solver.js"></script>
+  <script src="js/ac3_solver.js"></script>
+  <script src="js/generator.js"></script>
+  <script src="js/metrics.js"></script>
+  <script src="js/visualizer.js"></script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

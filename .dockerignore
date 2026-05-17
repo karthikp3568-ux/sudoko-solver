@@ -1,0 +1,12 @@
+__pycache__/
+.venv/
+node_modules/
+react-ui/node_modules/
+react-ui/dist/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.log
+.git
+.DS_Store
