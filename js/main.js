@@ -161,7 +161,6 @@ function startSolving() {
   if (isRunning && !isPaused) return;
   if (solver?.isDone || (!solver?.isSolvable && solver?.pos < 0)) {
     resetPuzzle();
-    return;
   }
 
   if (!solver) solver = new BacktrackingSolver(currentPuzzle);
@@ -256,13 +255,12 @@ function stepOnce() {
 function togglePause() {
   if (!isRunning) return;
   isPaused = !isPaused;
-  const btn = document.getElementById('btn-pause');
   if (isPaused) {
     clearTimeout(animationTimer);
-    btn.textContent = '▶ Resume';
+    setButtonState('paused');
     visualizer.showStatus('Paused');
   } else {
-    btn.textContent = '⏸ Pause';
+    setButtonState('running');
     visualizer.showStatus('Solving…', '#4a9eff');
     tick();
   }
@@ -386,15 +384,29 @@ function handleKeyDown(e) {
   if (r < 0) return;
   if (isRunning && !isPaused) return;
 
+  const cell = visualizer.cells[r][c];
+  // Check if cell is an original clue to prevent modifying it
+  const isOriginal = cell.classList.contains('original');
+
   if (e.key >= '1' && e.key <= '9') {
-    if (currentPuzzle[r][c] === 0) {
-      visualizer.cells[r][c].textContent = e.key;
-      visualizer.cells[r][c].className = 'cell solved selected';
+    if (!isOriginal) {
+      currentPuzzle[r][c] = parseInt(e.key, 10);
+      cell.textContent = e.key;
+      cell.className = 'cell solved selected';
+      solver = new BacktrackingSolver(currentPuzzle);
+      resetStats();
+      visualizer.updateConstraints(solver, r, c);
+      setButtonState('idle');
     }
   } else if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') {
-    if (currentPuzzle[r][c] === 0) {
-      visualizer.cells[r][c].textContent = '';
-      visualizer.cells[r][c].className = 'cell selected';
+    if (!isOriginal) {
+      currentPuzzle[r][c] = 0;
+      cell.textContent = '';
+      cell.className = 'cell selected';
+      solver = new BacktrackingSolver(currentPuzzle);
+      resetStats();
+      visualizer.updateConstraints(solver, r, c);
+      setButtonState('idle');
     }
   } else if (e.key === 'ArrowRight' && c < 8) { handleCellClick(r, c + 1); }
   else if (e.key === 'ArrowLeft'  && c > 0) { handleCellClick(r, c - 1); }
@@ -444,15 +456,17 @@ function setButtonState(state) {
   const pause  = document.getElementById('btn-pause');
 
   if (state === 'running') {
-    solve.disabled = true;
-    step.disabled  = true;
-    pause.disabled = false;
-    document.getElementById('btn-pause').textContent = '⏸ Pause';
+    if (solve) solve.disabled = true;
+    if (step) step.disabled  = true;
+    if (pause) { pause.disabled = false; pause.textContent = '⏸ Pause'; }
+  } else if (state === 'paused') {
+    if (solve) solve.disabled = true;
+    if (step) step.disabled  = false;
+    if (pause) { pause.disabled = false; pause.textContent = '▶ Resume'; }
   } else if (state === 'idle' || state === 'done') {
-    solve.disabled = false;
-    step.disabled  = false;
-    pause.disabled = true;
-    document.getElementById('btn-pause').textContent = '⏸ Pause';
+    if (solve) solve.disabled = false;
+    if (step) step.disabled  = false;
+    if (pause) { pause.disabled = true; pause.textContent = '⏸ Pause'; }
   }
 }
 
