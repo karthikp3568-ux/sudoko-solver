@@ -1,0 +1,17 @@
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# VS Code
+.vscode/
+
+# Node modules and build output
+react-ui/node_modules/
+react-ui/dist/
+react-ui/.vite/
+
+# Temporary and local files
+*.zip
+*.log*
+.DS_Store
