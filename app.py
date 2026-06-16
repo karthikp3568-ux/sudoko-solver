@@ -81,20 +81,25 @@ def solve_backtrack(grid, limit=2):
 
 def count_solutions(grid, limit=2):
     grid_copy = copy.deepcopy(grid)
-    empty = find_empty(grid_copy)
-    if not empty:
-        return 1
 
-    row, col = empty
-    count = 0
-    for num in range(1, 10):
-        if is_valid(grid_copy, row, col, num):
+    def search():
+        empty = find_empty(grid_copy)
+        if not empty:
+            return 1
+
+        row, col = empty
+        count = 0
+        for num in range(1, 10):
+            if not is_valid(grid_copy, row, col, num):
+                continue
             grid_copy[row][col] = num
-            if count_solutions(grid_copy, limit) >= limit:
-                return limit
-            count += 1
+            count += search()
             grid_copy[row][col] = 0
-    return count
+            if count >= limit:
+                return limit
+        return count
+
+    return search()
 
 
 def get_neighbors(r, c):
@@ -590,8 +595,8 @@ def api_solve():
     data = request.get_json() or {}
     grid = data.get('grid')
     algorithm = data.get('algorithm', 'ac3')
-    if not grid:
-        return jsonify({'solved': False, 'message': 'No grid provided'}), 400
+    if not validate_sudoku_board(grid):
+        return jsonify({'solved': False, 'message': 'Grid must be a valid 9x9 Sudoku board.'}), 400
     result = _run_algorithm(grid, algorithm)
     return jsonify(result)
 
@@ -601,8 +606,8 @@ def api_compare():
     data = request.get_json() or {}
     grid = data.get('grid')
     algorithms = data.get('algorithms', ['backtracking', 'ac3', 'dancing_links'])
-    if not grid:
-        return jsonify({'error': 'No grid provided'}), 400
+    if not validate_sudoku_board(grid):
+        return jsonify({'error': 'Grid must be a valid 9x9 Sudoku board.'}), 400
     results = {}
     for alg in algorithms:
         try:

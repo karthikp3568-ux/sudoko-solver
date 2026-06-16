@@ -66,7 +66,7 @@ def parse_sudoku_image(image_path, debug_dir=None):
                 board_row.append(0)
                 continue
 
-            digit = read_digit_from_cell(clean)
+            digit = read_digit_from_cell(cell)
             if digit != 0:
                 filled += 1
             board_row.append(digit)

@@ -1,17 +1,21 @@
 import { useEffect, useState } from 'react';
+import { API } from '../config/api';
 
-function ImageUpload({ onGridExtracted }) {
+function ImageUpload({ onGridExtracted, disabled = false }) {
   const [previewUrl, setPreviewUrl] = useState(null);
-  const [status, setStatus]         = useState('No photo uploaded');
-  const [progress, setProgress]     = useState(0);
+  const [status, setStatus] = useState('No photo uploaded');
+  const [progress, setProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedName, setSelectedName] = useState('');
 
   useEffect(() => {
-    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl); };
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
   }, [previewUrl]);
 
   async function processImage(file) {
-    setStatus('Uploading image to backend…');
+    setStatus('Uploading image to backend...');
     setProgress(5);
     setIsProcessing(true);
 
@@ -19,7 +23,7 @@ function ImageUpload({ onGridExtracted }) {
     formData.append('image', file);
 
     try {
-      const response = await fetch('/upload', {
+      const response = await fetch(API.upload, {
         method: 'POST',
         body: formData,
       });
@@ -32,7 +36,7 @@ function ImageUpload({ onGridExtracted }) {
         return;
       }
 
-      setStatus('✅ Sudoku grid detected. Review the board and press Solve.');
+      setStatus('Sudoku grid detected. Review the board and press Solve.');
       onGridExtracted(result.board);
     } catch (err) {
       console.error(err);
@@ -46,7 +50,11 @@ function ImageUpload({ onGridExtracted }) {
   function handleFileChange(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setPreviewUrl(prev => { if (prev) URL.revokeObjectURL(prev); return URL.createObjectURL(file); });
+    setSelectedName(file.name);
+    setPreviewUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
     processImage(file);
   }
 
@@ -59,10 +67,20 @@ function ImageUpload({ onGridExtracted }) {
         </div>
       </div>
       <div className="upload-controls">
-        <input type="file" accept="image/*" className="file-input" onChange={handleFileChange} />
+        <label className={`file-picker ${isProcessing || disabled ? 'file-picker--disabled' : ''}`}>
+          <input
+            type="file"
+            accept="image/*"
+            className="file-input"
+            onChange={handleFileChange}
+            disabled={isProcessing || disabled}
+          />
+          <span className="file-picker-label">Select photo</span>
+          <span className="file-picker-name">{selectedName || 'No file selected'}</span>
+        </label>
         <div className="upload-status">
           <span>{status}</span>
-          {isProcessing && <strong>⏳ Processing OCR...</strong>}
+          {isProcessing && <strong>Processing OCR...</strong>}
           {progress > 0 && progress < 100 && <strong>{progress}%</strong>}
         </div>
       </div>

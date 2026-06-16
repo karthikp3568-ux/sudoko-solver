@@ -123,15 +123,28 @@ export class AC3Solver {
 
     const ok = runAC3(domains, this._steps);
     if (ok) {
-      // Assign forced singles
+      // Assign forced singles one-by-one as individual step actions
       const g = puzzle.map(r => [...r]);
-      for (let r = 0; r < 9; r++)
-        for (let c = 0; c < 9; c++)
-          if (g[r][c] === 0 && domains[`${r},${c}`].size === 1)
-            g[r][c] = [...domains[`${r},${c}`]][0];
+      for (let r = 0; r < 9; r++) {
+        for (let c = 0; c < 9; c++) {
+          if (g[r][c] === 0 && domains[`${r},${c}`].size === 1) {
+            const num = [...domains[`${r},${c}`]][0];
+            g[r][c] = num;
+            this._steps.push({
+              type: 'place',
+              row: r,
+              col: c,
+              num,
+              message: `▶ AC-3 places forced single ${num} at (${r + 1},${c + 1})`,
+              explanation: `${num} is the only remaining candidate for cell (${r + 1},${c + 1}) after constraint propagation.`,
+            });
+          }
+        }
+      }
 
       this._steps.push({
-        type: 'ac3_complete', grid: g.map(r => [...r]),
+        type: 'ac3_complete',
+        grid: g.map(r => [...r]),
         message: '✓ AC-3 propagation done — starting MRV backtracking',
         explanation: 'Initial constraint propagation eliminated many candidates. Switching to guided search.',
       });

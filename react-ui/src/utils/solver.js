@@ -64,6 +64,27 @@ function solveGrid(sourceGrid) {
   return result.status === 'Solved' ? result.grid : cloneGrid(sourceGrid);
 }
 
+// Check if grid is fully completed and all cell values are between 1 and 9
+function isGridComplete(grid) {
+  return grid.every(row => row.every(value => value >= 1 && value <= 9));
+}
+
+function countMistakes(grid, solution, originalGrid) {
+  let mistakes = 0;
+  for (let r = 0; r < 9; r += 1) {
+    for (let c = 0; c < 9; c += 1) {
+      if (originalGrid?.[r]?.[c]) continue;
+      const value = grid[r][c];
+      if (value !== 0 && value !== solution[r][c]) mistakes += 1;
+    }
+  }
+  return mistakes;
+}
+
+function countFilledCells(grid) {
+  return grid.reduce((total, row) => total + row.filter(Boolean).length, 0);
+}
+
 function createSolver(sourceGrid) {
   const grid = cloneGrid(sourceGrid);
   let stack = [];
@@ -138,7 +159,9 @@ function createSolver(sourceGrid) {
 function generatePuzzleGrid(difficulty) {
   const solved = solveGrid(defaultPuzzle());
   const puzzle = cloneGrid(solved);
-  const clues = difficulty === 'insane'
+  const clues = typeof difficulty === 'number'
+    ? difficulty
+    : difficulty === 'insane'
     ? 18
     : difficulty === 'expert'
     ? 22
@@ -162,9 +185,19 @@ function generatePuzzleGrid(difficulty) {
 }
 
 const themes = {
-  dark: {},
-  neon: {},
-  minimal: {},
+  classic: { label: 'Classic Ink' },
+  arcade: { label: 'Arcade' },
+  paper: { label: 'Paper' },
+  glass: { label: 'Glass' },
 };
 
-export { createSolver, defaultPuzzle, generatePuzzleGrid, themes };
+export {
+  createSolver,
+  defaultPuzzle,
+  generatePuzzleGrid,
+  solveGrid,
+  isGridComplete,
+  countMistakes,
+  countFilledCells,
+  themes,
+};
