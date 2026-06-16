@@ -18,12 +18,21 @@ const STORAGE_KEY = 'sudoku-arena-profile';
 const THEME_KEY   = 'sudoku-arena-theme';
 
 const THEMES = [
-  { id: 'neon',   label: 'Cyber Neon',  icon: 'N' },
-  { id: 'dark',   label: 'Walnut',      icon: 'W' },
-  { id: 'galaxy', label: 'Typewriter',  icon: 'T' },
-  { id: 'ocean',  label: 'Field Desk',  icon: 'F' },
-  { id: 'lava',   label: 'Slate',       icon: 'S' },
-  { id: 'paper',  label: 'Classic',     icon: 'C' },
+  { id: 'dark',             label: 'Walnut',            icon: 'W' },
+  { id: 'neon',             label: 'Cyber Neon',        icon: 'N' },
+  { id: 'galaxy',           label: 'Typewriter',        icon: 'T' },
+  { id: 'ocean',            label: 'Field Desk',        icon: 'F' },
+  { id: 'lava',             label: 'Slate',             icon: 'S' },
+  { id: 'paper',            label: 'Classic',           icon: 'C' },
+  { id: 'cottagecore',      label: 'Cottagecore',       icon: 'H' },
+  { id: 'modern_neon',      label: 'Modern Neon',       icon: 'M' },
+  { id: 'glassmorphism',    label: 'Glassmorphism',     icon: 'G' },
+  { id: 'straw_hat',        label: 'Straw Hat',         icon: 'O' },
+  { id: 'saiyan_spirit',    label: 'Saiyan Spirit',     icon: 'Z' },
+  { id: 'hidden_leaf',      label: 'Hidden Leaf',       icon: 'L' },
+  { id: 'heros_spirit',     label: 'Hero\'s Spirit',    icon: 'A' },
+  { id: 'bladers_metal',    label: 'Bladers Metal',     icon: 'B' },
+  { id: 'cartoon_classics', label: 'Cartoon Classics',  icon: 'U' },
 ];
 
 const DIFFICULTIES = [
