@@ -78,7 +78,12 @@ function loadProfile() {
   } catch { return initialProfile; }
 }
 
-function loadTheme() { return localStorage.getItem(THEME_KEY) || 'neon'; }
+function loadTheme() {
+  const saved = localStorage.getItem(THEME_KEY);
+  // migrate old 'neon' default to 'dark'
+  if (!saved || saved === 'neon') return 'dark';
+  return saved;
+}
 
 function formatTime(s) {
   const n = Math.max(0, Math.floor(s));
@@ -306,6 +311,22 @@ export default function App() {
   const [aiCompletionPulse, setAiCompletionPulse] = useState(null);
   const [selectedNumber, setSelectedNumber]       = useState(null);
   const [showSummaryModal, setShowSummaryModal]   = useState(false);
+  const [notesMode, setNotesMode]                 = useState(false);
+  const [notes, setNotes]                         = useState(() => Array.from({length:9},()=>Array.from({length:9},()=>[])));
+
+  function toggleNote(r, c, num) {
+    setNotes(prev => {
+      const next = prev.map(row => row.map(cell => [...cell]));
+      const idx = next[r][c].indexOf(num);
+      if (idx >= 0) next[r][c].splice(idx, 1);
+      else next[r][c].push(num);
+      return next;
+    });
+  }
+
+  function clearNotes() {
+    setNotes(Array.from({length:9},()=>Array.from({length:9},()=>[])));
+  }
 
   // Campaign & Stats states
   const [isCampaignGame, setIsCampaignGame]         = useState(false);
@@ -464,6 +485,7 @@ export default function App() {
     setSelectedNumber(null);
     setShowSummaryModal(false);
     setMode(nextMode); aiSolverRef.current = null;
+    clearNotes();
     setMessage(nextMode === 'race' ? 'Ready to race. Start when ready.' : 'Puzzle ready. Start when ready.');
   }
 
@@ -1201,6 +1223,13 @@ export default function App() {
           </div>
           <button className="ctrl-pill" onClick={() => preparePuzzle(difficulty,mode)} disabled={controlsLocked}>New Puzzle</button>
           <button className="ctrl-pill" onClick={gradePlayerGrid} disabled={gameState === 'countdown'}>Check Grid</button>
+          <button
+            className={`ctrl-pill${notesMode ? ' ctrl-pill--notes-on' : ''}`}
+            onClick={() => setNotesMode(p => !p)}
+            title="Toggle pencil notes mode"
+          >
+            {notesMode ? '✏ Notes ON' : '✏ Notes'}
+          </button>
           <button className="arena-primary" onClick={primaryAction} disabled={gameState === 'countdown'}>{primaryLabel}</button>
           {!profile.isAuthenticated && (
             <span className="guest-notice">
@@ -1240,6 +1269,9 @@ export default function App() {
               algColor="var(--accent)" boardTheme={resolvedTheme}
               wrongCells={wrongCells} completionPulse={completionPulse}
               selectedNumber={selectedNumber}
+              notesMode={notesMode}
+              notes={notes}
+              onNoteToggle={toggleNote}
               readOnly={gameState !== 'running'}
               obscured={gameState === 'ready' || gameState === 'countdown'}
             />
