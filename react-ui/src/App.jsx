@@ -27,12 +27,6 @@ const THEMES = [
   { id: 'cottagecore',      label: 'Cottagecore',       icon: 'H' },
   { id: 'modern_neon',      label: 'Modern Neon',       icon: 'M' },
   { id: 'glassmorphism',    label: 'Glassmorphism',     icon: 'G' },
-  { id: 'straw_hat',        label: 'Straw Hat',         icon: 'O' },
-  { id: 'saiyan_spirit',    label: 'Saiyan Spirit',     icon: 'Z' },
-  { id: 'hidden_leaf',      label: 'Hidden Leaf',       icon: 'L' },
-  { id: 'heros_spirit',     label: 'Hero\'s Spirit',    icon: 'A' },
-  { id: 'bladers_metal',    label: 'Bladers Metal',     icon: 'B' },
-  { id: 'cartoon_classics', label: 'Cartoon Classics',  icon: 'U' },
 ];
 
 const DIFFICULTIES = [
@@ -89,8 +83,8 @@ function loadProfile() {
 
 function loadTheme() {
   const saved = localStorage.getItem(THEME_KEY);
-  // migrate old 'neon' default to 'dark'
-  if (!saved || saved === 'neon') return 'dark';
+  const validThemes = ['dark', 'neon', 'galaxy', 'ocean', 'lava', 'paper', 'cottagecore', 'modern_neon', 'glassmorphism'];
+  if (!saved || !validThemes.includes(saved)) return 'dark';
   return saved;
 }
 
@@ -189,20 +183,51 @@ function NumPad({ anchorRef, onSelect, onClose }) {
 
 /* ── Theme Picker ── */
 function ThemePicker({ current, onChange }) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    const fn = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
+  }, []);
+
+  const currentThemeObj = THEMES.find(t => t.id === current) || THEMES[0];
+
   return (
-    <div className="theme-picker">
-      <span className="theme-label">Theme</span>
-      <div className="theme-swatches">
-        {THEMES.map(t => (
-          <button
-            key={t.id}
-            className={`theme-swatch theme-swatch--${t.id}${current === t.id ? ' theme-swatch--active' : ''}`}
-            title={t.label}
-            onClick={() => onChange(t.id)}
-            aria-label={`${t.label} theme`}
-          />
-        ))}
-      </div>
+    <div className="theme-picker-wrapper" ref={dropdownRef}>
+      <button className="btn-theme-trigger" onClick={() => setOpen(!open)}>
+        <span className="theme-trigger-icon">🎨</span>
+        <span className="theme-trigger-label">{currentThemeObj.label}</span>
+        <span className="theme-trigger-arrow">{open ? '▴' : '▾'}</span>
+      </button>
+
+      {open && (
+        <div className="theme-dropdown-menu glass-panel animate-up">
+          <div className="theme-dropdown-category">
+            <div className="category-title">🎨 Themes</div>
+            <div className="category-grid">
+              {THEMES.map(t => (
+                <button
+                  key={t.id}
+                  className={`theme-dropdown-item ${current === t.id ? 'item--active' : ''}`}
+                  onClick={() => {
+                    onChange(t.id);
+                    setOpen(false);
+                  }}
+                >
+                  <span className={`theme-swatch theme-swatch--${t.id}`} />
+                  <span className="item-label">{t.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -350,6 +375,8 @@ export default function App() {
   const [heroGrid, setHeroGrid]     = useState(() => cloneGrid(defaultPuzzle()));
   const [heroActive, setHeroActive] = useState([-1,-1]);
   const [showNumpad, setShowNumpad] = useState(false);
+  const [showMenu, setShowMenu]     = useState(false);
+  const menuRef                     = useRef(null);
   const heroBoardRef = useRef(null);
 
   const aiSolverRef  = useRef(null);
@@ -409,9 +436,25 @@ export default function App() {
   }, [aiCompletionPulse]);
 
   useEffect(() => {
-    const fn = e => { if (e.key === 'Escape') { setShowNumpad(false); setShowLogin(false); } };
+    const fn = e => {
+      if (e.key === 'Escape') {
+        setShowNumpad(false);
+        setShowLogin(false);
+        setShowMenu(false);
+      }
+    };
     window.addEventListener('keydown', fn);
     return () => window.removeEventListener('keydown', fn);
+  }, []);
+
+  useEffect(() => {
+    const fn = e => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', fn);
+    return () => document.removeEventListener('mousedown', fn);
   }, []);
 
   function startTimer() {
@@ -603,6 +646,7 @@ export default function App() {
     
     const currentPlayerGrid = playerGridRef.current;
     const perfect = getWrongCells(currentPlayerGrid, solution, puzzle).length === 0;
+    const currentStats = getCorrectEntryCount(currentPlayerGrid, solution, puzzle);
     
     let coinsEarned = 25; // Default practice fail reward
     if (isCampaignGame) {
@@ -628,56 +672,54 @@ export default function App() {
           coinsEarned,
           isBoss: campaignLevelInfo.isBoss,
           timeTaken: finalTime,
-          mistakes: entryStats.wrong,
+          mistakes: currentStats.wrong,
         });
 
-        if (profile.isAuthenticated) {
-          setProfile(prev => {
-            const updatedHistory = [...(prev.history || [])];
-            updatedHistory.push({
-              date: new Date().toISOString().split('T')[0],
-              mode: 'campaign',
-              level: lvlCleared,
-              difficulty: campaignLevelInfo.difficulty,
-              won: true,
-              time: finalTime,
-              mistakes: entryStats.wrong,
-              coinsEarned,
-            });
-            return {
-              ...prev,
-              coins: prev.coins + coinsEarned,
-              campaignLevel: Math.max(prev.campaignLevel || 1, nextLvl),
-              gamesPlayed: prev.gamesPlayed + 1,
-              gamesWon: prev.gamesWon + 1,
-              history: updatedHistory,
-            };
+        setProfile(prev => {
+          if (!prev.isAuthenticated) return prev;
+          const updatedHistory = [...(prev.history || [])];
+          updatedHistory.push({
+            date: new Date().toISOString().split('T')[0],
+            mode: 'campaign',
+            level: lvlCleared,
+            difficulty: campaignLevelInfo.difficulty,
+            won: true,
+            time: finalTime,
+            mistakes: currentStats.wrong,
+            coinsEarned,
           });
-        }
+          return {
+            ...prev,
+            coins: prev.coins + coinsEarned,
+            campaignLevel: Math.max(prev.campaignLevel || 1, nextLvl),
+            gamesPlayed: prev.gamesPlayed + 1,
+            gamesWon: prev.gamesWon + 1,
+            history: updatedHistory,
+          };
+        });
         setShowLevelUpModal(true);
       } else {
         setCampaignFailed(true);
-        if (profile.isAuthenticated) {
-          setProfile(prev => {
-            const updatedHistory = [...(prev.history || [])];
-            updatedHistory.push({
-              date: new Date().toISOString().split('T')[0],
-              mode: 'campaign',
-              level: campaignLevelInfo.level,
-              difficulty: campaignLevelInfo.difficulty,
-              won: false,
-              time: finalTime,
-              mistakes: entryStats.wrong,
-              coinsEarned: 15,
-            });
-            return {
-              ...prev,
-              coins: prev.coins + 15,
-              gamesPlayed: prev.gamesPlayed + 1,
-              history: updatedHistory,
-            };
+        setProfile(prev => {
+          if (!prev.isAuthenticated) return prev;
+          const updatedHistory = [...(prev.history || [])];
+          updatedHistory.push({
+            date: new Date().toISOString().split('T')[0],
+            mode: 'campaign',
+            level: campaignLevelInfo.level,
+            difficulty: campaignLevelInfo.difficulty,
+            won: false,
+            time: finalTime,
+            mistakes: currentStats.wrong,
+            coinsEarned: 15,
           });
-        }
+          return {
+            ...prev,
+            coins: prev.coins + 15,
+            gamesPlayed: prev.gamesPlayed + 1,
+            history: updatedHistory,
+          };
+        });
         setMessage(isTimeout ? 'Time limit exceeded! Retrying might help.' : 'AI solved first. Speed up your deductions!');
       }
     } else {
@@ -686,29 +728,28 @@ export default function App() {
         ? `Done in ${formatTime(finalTime)}! +${coinsEarned} coins.`
         : `${agent.name} finished first. +25 practice coins.`
       );
-      if (profile.isAuthenticated) {
-        setProfile(prev => {
-          const updatedHistory = [...(prev.history || [])];
-          updatedHistory.push({
-            date: new Date().toISOString().split('T')[0],
-            mode: mode,
-            difficulty: difficulty,
-            won: playerWon,
-            time: finalTime,
-            mistakes: entryStats.wrong,
-            coinsEarned,
-          });
-          return {
-            ...prev,
-            coins: prev.coins + coinsEarned,
-            streak: playerWon ? prev.streak + 1 : 0,
-            bestTime: playerWon && (!prev.bestTime || finalTime < prev.bestTime) ? finalTime : prev.bestTime,
-            gamesPlayed: prev.gamesPlayed + 1,
-            gamesWon: prev.gamesWon + (playerWon ? 1 : 0),
-            history: updatedHistory,
-          };
+      setProfile(prev => {
+        if (!prev.isAuthenticated) return prev;
+        const updatedHistory = [...(prev.history || [])];
+        updatedHistory.push({
+          date: new Date().toISOString().split('T')[0],
+          mode: mode,
+          difficulty: difficulty,
+          won: playerWon,
+          time: finalTime,
+          mistakes: currentStats.wrong,
+          coinsEarned,
         });
-      }
+        return {
+          ...prev,
+          coins: prev.coins + coinsEarned,
+          streak: playerWon ? prev.streak + 1 : 0,
+          bestTime: playerWon && (!prev.bestTime || finalTime < prev.bestTime) ? finalTime : prev.bestTime,
+          gamesPlayed: prev.gamesPlayed + 1,
+          gamesWon: prev.gamesWon + (playerWon ? 1 : 0),
+          history: updatedHistory,
+        };
+      });
     }
   }
 
@@ -800,14 +841,6 @@ export default function App() {
     return (
       <header className="topbar glass-panel arena-topbar">
         <button className="nav-logo" onClick={() => setPage('home')}>🧩 Sudoku Arena</button>
-        <nav className="main-nav">
-          <button className={page === 'home' ? 'nav-active' : ''} onClick={() => setPage('home')}>Home</button>
-          <button onClick={() => playNow()}>Play</button>
-          <button onClick={() => openMode('race')}>AI Race</button>
-          <button onClick={() => openMode('photo')}>Scan & Play</button>
-          <button className={page === 'campaign' ? 'nav-active' : ''} onClick={() => { setPage('campaign'); setIsCampaignGame(false); }}>Campaign</button>
-          <button className={page === 'dashboard' ? 'nav-active' : ''} onClick={() => { setPage('dashboard'); setStatsView(false); }}>Dashboard</button>
-        </nav>
         <ThemePicker current={resolvedTheme} onChange={setTheme} />
         {profile.isAuthenticated ? (
           <div className="profile-strip">
@@ -818,6 +851,21 @@ export default function App() {
         ) : (
           <button className="btn-login" onClick={() => setShowLogin(true)}>Sign In</button>
         )}
+        <div className="menu-dropdown-wrapper" ref={menuRef}>
+          <button className="btn-menu-trigger" aria-label="Navigation Menu" onClick={() => setShowMenu(!showMenu)}>
+            ⋮
+          </button>
+          {showMenu && (
+            <div className="menu-dropdown-list glass-panel animate-up">
+              <button className={page === 'home' ? 'menu-item--active' : ''} onClick={() => { setPage('home'); setShowMenu(false); }}>Home</button>
+              <button onClick={() => { playNow(); setShowMenu(false); }}>Play</button>
+              <button onClick={() => { openMode('race'); setShowMenu(false); }}>AI Race</button>
+              <button onClick={() => { openMode('photo'); setShowMenu(false); }}>Scan & Play</button>
+              <button className={page === 'campaign' ? 'menu-item--active' : ''} onClick={() => { setPage('campaign'); setIsCampaignGame(false); setShowMenu(false); }}>Campaign</button>
+              <button className={page === 'dashboard' ? 'menu-item--active' : ''} onClick={() => { setPage('dashboard'); setStatsView(false); setShowMenu(false); }}>Dashboard</button>
+            </div>
+          )}
+        </div>
       </header>
     );
   }
@@ -1299,11 +1347,25 @@ export default function App() {
                     key={num}
                     className={`num-btn ${isSelected ? 'num-btn--selected' : ''} ${isCompleted ? 'num-btn--completed' : ''}`}
                     onClick={() => {
-                      const nextNum = isSelected ? null : num;
-                      setSelectedNumber(nextNum);
                       const [ar, ac] = activeCell;
-                      if (ar >= 0 && ac >= 0 && puzzle[ar][ac] === 0 && gameState === 'running') {
-                        handleCellEdit(ar, ac, nextNum ?? 0);
+                      const canEdit = ar >= 0 && ac >= 0 && puzzle[ar][ac] === 0 && gameState === 'running';
+                      
+                      if (canEdit) {
+                        if (notesMode) {
+                          toggleNote(ar, ac, num);
+                          setSelectedNumber(num); // Keep it selected
+                        } else {
+                          if (playerGrid[ar][ac] === num) {
+                            handleCellEdit(ar, ac, 0);
+                            setSelectedNumber(null);
+                          } else {
+                            handleCellEdit(ar, ac, num);
+                            setSelectedNumber(num);
+                          }
+                        }
+                      } else {
+                        // Just toggle highlight
+                        setSelectedNumber(isSelected ? null : num);
                       }
                     }}
                   >
