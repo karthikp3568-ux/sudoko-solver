@@ -376,10 +376,10 @@ button { border: none; cursor: pointer; }
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 480px);
-  gap: clamp(16px, 2.5vw, 36px);
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3vw, 48px);
   align-items: center;
-  padding: clamp(18px, 2.5vw, 36px);
+  padding: clamp(24px, 3.5vw, 56px) clamp(18px, 3vw, 48px);
   position: relative;
 }
 .home-hero::before {
@@ -390,20 +390,22 @@ button { border: none; cursor: pointer; }
 .home-copy { display:flex; flex-direction:column; gap:18px; position:relative; z-index:1; }
 .home-copy h1 {
   font-family: 'Syne', sans-serif;
-  font-size: clamp(1.8rem, 4vw, 3.8rem);
-  font-weight: 800; line-height: 1.05; letter-spacing: -0.025em;
+  font-size: clamp(2.4rem, 5.5vw, 5.5rem);
+  font-weight: 800; line-height: 1.02; letter-spacing: -0.025em;
   background: linear-gradient(135deg, var(--text) 40%, var(--accent) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
 }
 .home-tagline {
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.62rem, 1vw, 0.75rem);
+  font-size: clamp(0.72rem, 1.1vw, 0.92rem);
   font-weight: 600; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent);
 }
 .hero-desc {
-  max-width: 540px; color: var(--text-muted);
+  max-width: 100%;
+  color: var(--text-muted);
   font-family: 'Hanken Grotesk', sans-serif;
-  font-size: clamp(0.95rem, 1.4vw, 1.1rem); line-height: 1.75;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  line-height: 1.75;
 }
 .hero-note {
   font-family: 'Hanken Grotesk', sans-serif;
@@ -1757,9 +1759,9 @@ button { border: none; cursor: pointer; }
    SCREEN FIT — laptop & small screens
 ══════════════════════════════════════════════ */
 
-/* Board scales to fill more of the screen since layout is now full-width */
+/* Board scales to fill column, no fixed max */
 .board-grid {
-  width: min(100%, clamp(320px, 40vw, 560px));
+  width: min(100%, clamp(320px, 44vw, 600px));
 }
 
 /* Home board preview column */
