@@ -817,6 +817,7 @@ export default function App() {
 
   function openMode(nextMode) {
     if (nextMode === 'race') { preparePuzzle(difficulty, 'race'); setPage('ai-select'); }
+    else if (nextMode === 'photo') { preparePuzzle(difficulty, 'solo'); setMode('photo'); setPage('play'); }
     else { preparePuzzle(difficulty, nextMode); setPage('play'); }
   }
 
