@@ -222,35 +222,36 @@ button { border: none; cursor: pointer; }
    TOPBAR — compact, never overflows
 ══════════════════════════════════════════════ */
 .topbar {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px clamp(10px, 2vw, 24px);
-  margin: 10px 0 0;
-  flex-wrap: nowrap; position: sticky; top: 8px; z-index: 100;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px clamp(16px, 2.5vw, 32px);
+  margin: 12px 0 0;
+  flex-wrap: nowrap; position: sticky; top: 10px; z-index: 100;
   background: rgba(15,13,19, 0.92);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   width: 100%; box-sizing: border-box;
+  min-height: 60px;
 }
 
 .nav-logo {
-  display: flex; align-items: center; gap: 5px;
-  padding: 6px 12px; border-radius: 9px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: 12px;
   background: var(--accent); color: var(--text-on-accent);
   font-family: 'Syne', sans-serif; font-weight: 800;
-  font-size: clamp(0.65rem, 1vw, 0.82rem);
-  letter-spacing: 0.04em; text-transform: uppercase;
+  font-size: clamp(0.82rem, 1.2vw, 1rem);
+  letter-spacing: 0.06em; text-transform: uppercase;
   box-shadow: var(--accent-glow); transition: all 0.2s ease;
   white-space: nowrap; border: none; cursor: pointer; flex-shrink: 0;
 }
 .nav-logo:hover { opacity: 0.88; }
 
-.main-nav { display: flex; gap: 2px; flex-wrap: nowrap; margin-right: auto; min-width: 0; overflow: hidden; }
+.main-nav { display: flex; gap: 6px; flex-wrap: nowrap; margin-right: auto; min-width: 0; }
 
 .main-nav button {
-  padding: 5px 9px; border-radius: 7px;
+  padding: 8px 16px; border-radius: 10px;
   border: 1px solid var(--panel-border); background: transparent;
   color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
-  font-weight: 500; font-size: clamp(0.58rem, 0.82vw, 0.7rem);
-  letter-spacing: 0.02em; transition: all 0.15s ease; white-space: nowrap;
+  font-weight: 500; font-size: clamp(0.72rem, 1vw, 0.86rem);
+  letter-spacing: 0.03em; transition: all 0.15s ease; white-space: nowrap;
 }
 .main-nav button:hover, .main-nav .nav-active {
   background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
@@ -268,27 +269,26 @@ button { border: none; cursor: pointer; }
 }
 
 .btn-login {
-  padding: 8px 18px; border-radius: 10px;
+  padding: 9px 20px; border-radius: 10px;
   border: 1px solid var(--accent); background: transparent;
   color: var(--accent); font-family: 'Syne', sans-serif;
-  font-weight: 700; font-size: clamp(0.78rem, 1vw, 0.88rem);
-  cursor: pointer; transition: all 0.18s ease;
+  font-weight: 700; font-size: clamp(0.82rem, 1.1vw, 0.96rem);
+  cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
 }
 .btn-login:hover { background: var(--accent-soft); }
 
 /* ══════════════════════════════════════════════
    THEME SWATCHES
 ══════════════════════════════════════════════ */
-.theme-picker { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.theme-picker { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .theme-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em;
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--text-faint);
-  display: none; /* hidden on small screens, swatches speak for themselves */
 }
-.theme-swatches { display: flex; gap: 4px; align-items: center; }
+.theme-swatches { display: flex; gap: 5px; align-items: center; }
 .theme-swatch {
-  width: 20px; height: 20px; border-radius: 50%;
+  width: 24px; height: 24px; border-radius: 50%;
   border: 2px solid transparent; cursor: pointer;
   transition: all 0.18s ease; flex-shrink: 0;
 }
@@ -298,13 +298,13 @@ button { border: none; cursor: pointer; }
 .theme-swatch--galaxy  { background: conic-gradient(#c084fc, #f0abfc, #c084fc); }
 .theme-swatch--light   { background: conic-gradient(#6750a4, #e9ddff, #6750a4); }
 
-.profile-strip { display: flex; gap: 4px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
+.profile-strip { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
 .profile-chip {
-  display: flex; align-items: center; gap: 3px;
-  padding: 4px 7px; border-radius: 8px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-radius: 10px;
   border: 1px solid var(--panel-border); background: var(--accent-soft);
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.62rem; font-weight: 600;
+  font-size: clamp(0.72rem, 1vw, 0.82rem); font-weight: 600;
   color: var(--text); white-space: nowrap; flex-shrink: 0;
 }
 
