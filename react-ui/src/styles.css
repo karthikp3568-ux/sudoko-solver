@@ -373,7 +373,7 @@ button { border: none; cursor: pointer; }
 /* ══════════════════════════════════════════════
    HOME PAGE LAYOUT
 ══════════════════════════════════════════════ */
-.home-grid { display: flex; flex-direction: column; gap: 20px; padding-top: 20px; }
+.home-grid { display: flex; flex-direction: column; gap: 20px; padding-top: 12px; }
 
 .home-hero {
   display: grid;
@@ -384,6 +384,8 @@ button { border: none; cursor: pointer; }
   overflow: visible;
   position: relative;
   min-height: 0;
+  height: calc(100vh - 60px);
+  max-height: calc(100vh - 60px);
 }
 .home-hero::before {
   content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
