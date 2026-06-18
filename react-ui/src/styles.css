@@ -168,16 +168,16 @@ html, body { min-height: 100%; overflow-x: hidden; scroll-behavior: smooth; }
    GLOBAL RESPONSIVE FIX — fits any screen size
 ══════════════════════════════════════════════ */
 html {
-  font-size: clamp(13px, 1.1vw, 16px);
+  font-size: clamp(16px, 1.3vw, 20px);
   height: 100%;
 }
 
 body {
-  font-family: 'Hanken Grotesk', -apple-system, system-ui, sans-serif;
+  font-family: 'Times New Roman', Times, Georgia, serif;
   font-size: 1rem;
   background: var(--bg);
   color: var(--text);
-  line-height: 1.6;
+  line-height: 1.65;
   min-height: 100dvh;
   -webkit-font-smoothing: antialiased;
 }
@@ -222,22 +222,23 @@ button { border: none; cursor: pointer; }
    TOPBAR — compact, never overflows
 ══════════════════════════════════════════════ */
 .topbar {
-  display: flex; align-items: center; gap: 12px;
-  padding: 12px clamp(16px, 2.5vw, 32px);
-  margin: 12px 0 0;
-  flex-wrap: nowrap; position: sticky; top: 10px; z-index: 100;
-  background: rgba(15,13,19, 0.92);
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px clamp(20px, 3vw, 40px);
+  margin: 0;
+  flex-wrap: nowrap; position: sticky; top: 0; z-index: 100;
+  background: rgba(15,13,19, 0.95);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   width: 100%; box-sizing: border-box;
-  min-height: 60px;
+  min-height: 72px;
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .nav-logo {
   display: flex; align-items: center; gap: 8px;
-  padding: 10px 20px; border-radius: 12px;
+  padding: 11px 22px; border-radius: 12px;
   background: var(--accent); color: var(--text-on-accent);
-  font-family: 'Syne', sans-serif; font-weight: 800;
-  font-size: clamp(0.82rem, 1.2vw, 1rem);
+  font-family: 'Times New Roman', Times, serif; font-weight: 800;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
   letter-spacing: 0.06em; text-transform: uppercase;
   box-shadow: var(--accent-glow); transition: all 0.2s ease;
   white-space: nowrap; border: none; cursor: pointer; flex-shrink: 0;
@@ -247,11 +248,11 @@ button { border: none; cursor: pointer; }
 .main-nav { display: flex; gap: 6px; flex-wrap: nowrap; margin-right: auto; min-width: 0; }
 
 .main-nav button {
-  padding: 8px 16px; border-radius: 10px;
+  padding: 10px 18px; border-radius: 10px;
   border: 1px solid var(--panel-border); background: transparent;
-  color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
-  font-weight: 500; font-size: clamp(0.72rem, 1vw, 0.86rem);
-  letter-spacing: 0.03em; transition: all 0.15s ease; white-space: nowrap;
+  color: var(--text-muted); font-family: 'Times New Roman', Times, serif;
+  font-weight: 600; font-size: clamp(0.88rem, 1.1vw, 1rem);
+  transition: all 0.15s ease; white-space: nowrap;
 }
 .main-nav button:hover, .main-nav .nav-active {
   background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
@@ -269,10 +270,10 @@ button { border: none; cursor: pointer; }
 }
 
 .btn-login {
-  padding: 9px 20px; border-radius: 10px;
+  padding: 10px 22px; border-radius: 10px;
   border: 1px solid var(--accent); background: transparent;
-  color: var(--accent); font-family: 'Syne', sans-serif;
-  font-weight: 700; font-size: clamp(0.82rem, 1.1vw, 0.96rem);
+  color: var(--accent); font-family: 'Times New Roman', Times, serif;
+  font-weight: 700; font-size: clamp(0.88rem, 1.1vw, 1rem);
   cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
 }
 .btn-login:hover { background: var(--accent-soft); }
@@ -298,13 +299,13 @@ button { border: none; cursor: pointer; }
 .theme-swatch--galaxy  { background: conic-gradient(#c084fc, #f0abfc, #c084fc); }
 .theme-swatch--light   { background: conic-gradient(#6750a4, #e9ddff, #6750a4); }
 
-.profile-strip { display: flex; gap: 6px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
+.profile-strip { display: flex; gap: 8px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
 .profile-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 7px 12px; border-radius: 10px;
+  display: flex; align-items: center; gap: 6px;
+  padding: 9px 14px; border-radius: 10px;
   border: 1px solid var(--panel-border); background: var(--accent-soft);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.72rem, 1vw, 0.82rem); font-weight: 600;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: clamp(0.88rem, 1.1vw, 1rem); font-weight: 600;
   color: var(--text); white-space: nowrap; flex-shrink: 0;
 }
 
@@ -1842,4 +1843,28 @@ button { border: none; cursor: pointer; }
   .main-nav { order: 3; width: 100%; }
   .history-grid, .rules-grid, .difficulty-grid { grid-template-columns: 1fr; }
   .agent-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Sign Out button */
+.btn-signout {
+  padding: 9px 18px; border-radius: 10px;
+  border: 1px solid var(--danger); background: transparent;
+  color: var(--danger); font-family: 'Times New Roman', Times, serif;
+  font-weight: 700; font-size: clamp(0.88rem, 1.1vw, 1rem);
+  cursor: pointer; transition: all 0.18s ease; flex-shrink: 0;
+  white-space: nowrap;
+}
+.btn-signout:hover { background: rgba(255,100,100,0.1); }
+
+/* ── Global Times New Roman override for all text ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Times New Roman', Times, Georgia, serif !important;
+}
+p, span, label, li, td, th, button, input, select, textarea, a {
+  font-family: 'Times New Roman', Times, Georgia, serif;
+}
+/* Keep mono font only for numbers in cells and code */
+.cell-input, .num-btn-digit, .race-stat strong,
+.kpi-val, .history-year, .progress-badge {
+  font-family: 'Times New Roman', Times, Georgia, serif;
 }

@@ -848,9 +848,13 @@ export default function App() {
             <span className="profile-chip"><span className="chip-icon">👤</span>{profile.username}</span>
             <span className="profile-chip"><span className="chip-icon">💰</span>{profile.coins}</span>
             <span className="profile-chip"><span className="chip-icon">🔥</span>{profile.streak}</span>
+            <button className="btn-signout" onClick={() => {
+              setProfile({ ...initialProfile });
+              setPage('home');
+            }}>Sign Out</button>
           </div>
         ) : (
-          <button className="btn-login" onClick={() => setShowLogin(true)}>Sign In</button>
+          <button className="btn-login" onClick={() => setShowLogin(true)}>Sign In / Register</button>
         )}
         <div className="menu-dropdown-wrapper" ref={menuRef}>
           <button className="btn-menu-trigger" aria-label="Navigation Menu" onClick={() => setShowMenu(!showMenu)}>
