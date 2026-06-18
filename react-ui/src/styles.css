@@ -224,33 +224,34 @@ button { border: none; cursor: pointer; }
 ══════════════════════════════════════════════ */
 .topbar {
   display: flex; align-items: center; gap: 8px;
-  padding: 10px 16px; margin: 12px 0 0;
-  flex-wrap: wrap; position: sticky; top: 10px; z-index: 100;
-  background: rgba(15,13,19, 0.88);
+  padding: 8px 14px; margin: 10px 0 0;
+  flex-wrap: nowrap; position: sticky; top: 8px; z-index: 100;
+  background: rgba(15,13,19, 0.92);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   width: 100%; box-sizing: border-box;
+  overflow: hidden;
 }
 
 .nav-logo {
-  display: flex; align-items: center; gap: 6px;
-  padding: 7px 14px; border-radius: 10px;
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 12px; border-radius: 9px;
   background: var(--accent); color: var(--text-on-accent);
   font-family: 'Syne', sans-serif; font-weight: 800;
-  font-size: clamp(0.7rem, 1.1vw, 0.88rem);
-  letter-spacing: 0.05em; text-transform: uppercase;
+  font-size: clamp(0.65rem, 1vw, 0.82rem);
+  letter-spacing: 0.04em; text-transform: uppercase;
   box-shadow: var(--accent-glow); transition: all 0.2s ease;
   white-space: nowrap; border: none; cursor: pointer; flex-shrink: 0;
 }
-.nav-logo:hover { transform: scale(1.03); opacity: 0.9; }
+.nav-logo:hover { opacity: 0.88; }
 
-.main-nav { display: flex; gap: 3px; flex-wrap: wrap; margin-right: auto; min-width: 0; }
+.main-nav { display: flex; gap: 2px; flex-wrap: nowrap; margin-right: auto; min-width: 0; overflow: hidden; }
 
 .main-nav button {
-  padding: 6px 11px; border-radius: 8px;
+  padding: 5px 9px; border-radius: 7px;
   border: 1px solid var(--panel-border); background: transparent;
   color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
-  font-weight: 500; font-size: clamp(0.62rem, 0.9vw, 0.75rem);
-  letter-spacing: 0.03em; transition: all 0.15s ease; white-space: nowrap;
+  font-weight: 500; font-size: clamp(0.58rem, 0.82vw, 0.7rem);
+  letter-spacing: 0.02em; transition: all 0.15s ease; white-space: nowrap;
 }
 .main-nav button:hover, .main-nav .nav-active {
   background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
@@ -279,33 +280,33 @@ button { border: none; cursor: pointer; }
 /* ══════════════════════════════════════════════
    THEME SWATCHES
 ══════════════════════════════════════════════ */
-.theme-picker { display: flex; align-items: center; gap: 8px; }
+.theme-picker { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
 .theme-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.58rem, 0.85vw, 0.68rem);
-  font-weight: 500; letter-spacing: 0.12em;
+  font-size: 0.55rem; font-weight: 600; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--text-faint);
+  display: none; /* hidden on small screens, swatches speak for themselves */
 }
-.theme-swatches { display: flex; gap: 5px; align-items: center; }
+.theme-swatches { display: flex; gap: 4px; align-items: center; }
 .theme-swatch {
-  width: 24px; height: 24px; border-radius: 50%;
+  width: 20px; height: 20px; border-radius: 50%;
   border: 2px solid transparent; cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease; flex-shrink: 0;
 }
-.theme-swatch:hover { transform: scale(1.2); }
-.theme-swatch--active { border-color: var(--accent) !important; transform: scale(1.15); box-shadow: var(--accent-glow); }
+.theme-swatch:hover { transform: scale(1.18); }
+.theme-swatch--active { border-color: var(--text) !important; transform: scale(1.15); }
 .theme-swatch--dark    { background: conic-gradient(#cfbcff, #6750a4, #cfbcff); }
 .theme-swatch--galaxy  { background: conic-gradient(#c084fc, #f0abfc, #c084fc); }
 .theme-swatch--light   { background: conic-gradient(#6750a4, #e9ddff, #6750a4); }
 
-.profile-strip { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.profile-strip { display: flex; gap: 4px; flex-wrap: nowrap; align-items: center; flex-shrink: 0; }
 .profile-chip {
-  display: flex; align-items: center; gap: 5px;
-  padding: 6px 10px; border-radius: 10px;
+  display: flex; align-items: center; gap: 3px;
+  padding: 4px 7px; border-radius: 8px;
   border: 1px solid var(--panel-border); background: var(--accent-soft);
   font-family: 'JetBrains Mono', monospace;
-  font-size: clamp(0.68rem, 0.95vw, 0.76rem); font-weight: 500;
-  color: var(--text); white-space: nowrap;
+  font-size: 0.62rem; font-weight: 600;
+  color: var(--text); white-space: nowrap; flex-shrink: 0;
 }
 
 /* ══════════════════════════════════════════════
@@ -376,9 +377,12 @@ button { border: none; cursor: pointer; }
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0,1fr) minmax(280px,440px);
-  gap: clamp(20px,3vw,40px); align-items: center;
-  padding: clamp(20px,3vw,40px); overflow: hidden; position: relative;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  gap: clamp(16px, 2.5vw, 36px);
+  align-items: start;
+  padding: clamp(18px, 2.5vw, 36px);
+  overflow: visible;
+  position: relative;
   min-height: 0;
 }
 .home-hero::before {
@@ -425,10 +429,11 @@ button { border: none; cursor: pointer; }
 @keyframes glowPulse { 0%,100%{opacity:0.5;transform:scale(1);}  50%{opacity:1;transform:scale(1.04);} }
 
 /* ── 3D Board ── */
-.board3d-scene { perspective:900px; perspective-origin:50% 50%; }
+.board3d-scene { perspective:900px; perspective-origin:50% 50%; width: 100%; }
 .board3d-body {
   transform-style:preserve-3d; transition:transform 0.05s linear;
   cursor:grab; user-select:none; -webkit-user-select:none; will-change:transform;
+  width: 100%;
 }
 .board3d-body:active { cursor:grabbing; }
 
@@ -1757,8 +1762,17 @@ button { border: none; cursor: pointer; }
 
 /* Board scales to fit available space */
 .board-grid {
-  width: min(100%, clamp(280px, 45vw, 480px));
+  width: min(100%, clamp(300px, 38vw, 460px));
 }
+
+/* Home board preview column — fixed width so it never collapses */
+.home-board-preview {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  gap: 10px; align-items: center;
+  min-width: 280px;
+}
+.home-photo-upload { width: 100%; }
 
 /* Solo layout — tighter on laptops */
 .solo-layout {
