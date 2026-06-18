@@ -196,10 +196,9 @@ button { border: none; cursor: pointer; }
 
 .app-frame {
   position: relative; z-index: 1;
-  max-width: 1400px; margin: 0 auto;
-  padding: 0 clamp(10px, 2vw, 28px) 40px;
-  display: flex; flex-direction: column; gap: 0;
   width: 100%;
+  padding: 0 clamp(10px, 2vw, 24px) 40px;
+  display: flex; flex-direction: column; gap: 0;
   box-sizing: border-box;
 }
 
@@ -224,12 +223,12 @@ button { border: none; cursor: pointer; }
 ══════════════════════════════════════════════ */
 .topbar {
   display: flex; align-items: center; gap: 8px;
-  padding: 8px 14px; margin: 10px 0 0;
+  padding: 8px clamp(10px, 2vw, 24px);
+  margin: 10px 0 0;
   flex-wrap: nowrap; position: sticky; top: 8px; z-index: 100;
   background: rgba(15,13,19, 0.92);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   width: 100%; box-sizing: border-box;
-  overflow: hidden;
 }
 
 .nav-logo {
@@ -377,15 +376,12 @@ button { border: none; cursor: pointer; }
 
 .home-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 480px);
   gap: clamp(16px, 2.5vw, 36px);
-  align-items: start;
+  align-items: center;
   padding: clamp(18px, 2.5vw, 36px);
-  overflow: visible;
   position: relative;
-  min-height: 0;
-  height: calc(100vh - 60px);
-  max-height: calc(100vh - 60px);
+  min-height: calc(100vh - 60px);
 }
 .home-hero::before {
   content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
@@ -1762,12 +1758,12 @@ button { border: none; cursor: pointer; }
    SCREEN FIT — laptop & small screens
 ══════════════════════════════════════════════ */
 
-/* Board scales to fit available space */
+/* Board scales to fill more of the screen since layout is now full-width */
 .board-grid {
-  width: min(100%, clamp(300px, 38vw, 460px));
+  width: min(100%, clamp(320px, 40vw, 560px));
 }
 
-/* Home board preview column — fixed width so it never collapses */
+/* Home board preview column */
 .home-board-preview {
   position: relative; z-index: 1;
   display: flex; flex-direction: column;
