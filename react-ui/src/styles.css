@@ -381,7 +381,6 @@ button { border: none; cursor: pointer; }
   align-items: center;
   padding: clamp(18px, 2.5vw, 36px);
   position: relative;
-  min-height: calc(100vh - 60px);
 }
 .home-hero::before {
   content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
